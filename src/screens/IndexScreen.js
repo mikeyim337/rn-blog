@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'reac
 import { Context as BlogContext } from '../context/BlogContext';
 import { Feather } from '@expo/vector-icons';
 
-const IndexScreen = () => {
+const IndexScreen = ({ navigation }) => {
     const { state, addBlogPost, deleteBlogPost } = useContext(BlogContext);
 
     return ( <View>
@@ -13,16 +13,32 @@ const IndexScreen = () => {
             data={state}
             keyExtractor={(blogPost) => blogPost.title}
             renderItem={({ item }) => {
-                return <View style={styles.row}>
+                return <TouchableOpacity onPress={() => navigation.navigate('Show', { id: item.id })}>
+                    <View style={styles.row}>
                     <Text style={styles.title}>{item.title} - {item.id}</Text>
                     <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
                         <Feather name="trash" style={styles.icon} />
 
                     </TouchableOpacity>
                     </View>
+
+
+                </TouchableOpacity>
+                
             }} 
         />
     </View> );
+}
+
+IndexScreen.navigationOptions = ({ navigation }) => {
+    return {
+        headerRight: () => ( 
+          <TouchableOpacity  onPress={() => navigation.navigate('Create')}>
+              <Feather name="plus" style={styles.create} />
+
+          </TouchableOpacity>  
+        ),
+    }
 }
 
 const styles = StyleSheet.create({
@@ -40,7 +56,12 @@ const styles = StyleSheet.create({
     },
     icon: {
         fontSize: 24
+    },
+    create: {
+        marginRight: 10,
+        fontSize: 30
     }
+
 });
 
 export default IndexScreen;
